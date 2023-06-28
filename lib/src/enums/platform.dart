@@ -1,7 +1,55 @@
-class IGDBPlatforms {
+// ignore_for_file: constant_identifier_names, avoid_dynamic_calls
+
+enum IGDBPlatforms {
+  SUPER_NINTENDO._private(
+      'Super Nintendo Entertainment System (SNES)', _snesId,),
+  N64._private('Nintendo 64', _n64Id),
+  WII._private('Wii', _wiiId),
+  PC_WINDOWS._private('PC (Microsoft Windows)', _pcId),
+  PLAYSTATION._private('Playstation', _ps1Id),
+  PLAYSTATION_2._private('Playstation 2', _ps2Id),
+  PLAYSTATION_3._private('Playstation 3', _ps3Id),
+  XBOX._private('Xbox', _xboxId),
+  XBOX_360._private('Xbox 360', _xbox360Id),
+  PC_DOS._private('PC DOS', _pcdosId),
+  MAC._private('Mac', _macId),
+  COMMODORE_C64._private('Commodore C64/128', _commodoreId),
+  NES._private(
+      'Nintendo Entertainment System (NES)', _nesId,),
+  LINUX._private('Linux', _linuxId),
+  DS._private('Nintendo DS', _dsId),
+  GAMECUBE._private('Nintendo Gamecube', _gamecubeId),
+  GAMEBOY_COLOR._private('Game Boy Color', _gbcId),
+  DREAMCAST._private('Dreamcast', _dreamcastId),
+  GAMEBOY_ADVANCE._private('Game Boy Advance', _gbaId),
+  AMSTRAD_CPC._private('Amstrad CPC', _amstradCpcId),
+  MSX._private('MSX', _msxId),
+  SEGA_GENESIS._private('Sega Mega Drive/Genesis', _segaGenesisId),
+  SEGA_SATURN._private('Sega Saturn', _segaSaturnId),
+  GAMEBOY._private('Game Boy', _gameBoyId),
+  ANDROID._private('Android', _androidId),
+  XBOX_LIVE_ARCADE._private('Xbox Live Arcade', _xboxLiveArcadeId),
+  NINTENDO_3DS._private('Nintendo 3DS', _3dsId),
+  NONE._private('None', 0),
+  IOS._private('iOS', _iosId),
+  WIIU._private('Wii U', _wiiUId),
+  PLAYSTATION_NETWORK._private('Playstation Network', _psnId),
+  PLAYSTATION_VITA._private('Playstation Vita', _psVitaId),
+  VIRTUAL_CONSOLE._private('Virtual Console (Nintendo)', _vcId),
+  PLAYSTATION_4._private('Playstation 4', _ps4Id),
+  XBOX_ONE._private('Xbox One', _xboxOneId),
+  FAMILY_COMPUTER_DISK_SYSTEM._private(
+          'Family Computer Disk System', _familyComputerDiskId,),
+  SWITCH._private('Switch', _switchId),
+  ESHOP._private('Nintendo eShop', _nintendoEshopId),
+  STEAMVR._private('SteamVR', _steamVrId),
+  DAYDREAM._private('Daydream', _daydreamId),
+  PLAYSTATION_VR._private('Playstation VR', _psVrId),
+  PLAYSTATION_PORTABLE._private('Playstation Portable', _pspId);
+
+  const IGDBPlatforms._private(this.name, this.id);
   final String name;
   final int id;
-  const IGDBPlatforms._private(this.name, this.id);
 
   static const int _linuxId = 3;
   static const int _n64Id = 4;
@@ -45,53 +93,7 @@ class IGDBPlatforms {
   static const int _daydreamId = 164;
   static const int _psVrId = 165;
 
-  static const IGDBPlatforms LINUX = const IGDBPlatforms._private('Linux', _linuxId);
-  static const IGDBPlatforms N64 = const IGDBPlatforms._private('Nintendo 64', _n64Id);
-  static const IGDBPlatforms WII = const IGDBPlatforms._private("Wii", _wiiId);
-  static const IGDBPlatforms PC_WINDOWS = const IGDBPlatforms._private('PC (Microsoft Windows)', _pcId);
-  static const IGDBPlatforms PLAYSTATION = const IGDBPlatforms._private('Playstation', _ps1Id);
-  static const IGDBPlatforms PLAYSTATION_2 = const IGDBPlatforms._private('Playstation 2', _ps2Id);
-  static const IGDBPlatforms PLAYSTATION_3 = const IGDBPlatforms._private('Playstation 3', _ps3Id);
-  static const IGDBPlatforms XBOX = const IGDBPlatforms._private('Xbox', _xboxId);
-  static const IGDBPlatforms XBOX_360 = const IGDBPlatforms._private('Xbox 360', _xbox360Id);
-  static const IGDBPlatforms PC_DOS = const IGDBPlatforms._private('PC DOS', _pcdosId);
-  static const IGDBPlatforms MAC = const IGDBPlatforms._private('Mac', _macId);
-  static const IGDBPlatforms COMMODORE_C64 = const IGDBPlatforms._private('Commodore C64/128', _commodoreId);
-  static const IGDBPlatforms NES = const IGDBPlatforms._private('Nintendo Entertainment System (NES)', _nesId);
-  static const IGDBPlatforms SUPER_NINTENDO =
-      const IGDBPlatforms._private('Super Nintendo Entertainment System (SNES)', _snesId);
-  static const IGDBPlatforms DS = const IGDBPlatforms._private('Nintendo DS', _dsId);
-  static const IGDBPlatforms GAMECUBE = const IGDBPlatforms._private('Nintendo Gamecube', _gamecubeId);
-  static const IGDBPlatforms GAMEBOY_COLOR = const IGDBPlatforms._private('Game Boy Color', _gbcId);
-  static const IGDBPlatforms DREAMCAST = const IGDBPlatforms._private('Dreamcast', _dreamcastId);
-  static const IGDBPlatforms GAMEBOY_ADVANCE = const IGDBPlatforms._private('Game Boy Advance', _gbaId);
-  static const IGDBPlatforms AMSTRAD_CPC = const IGDBPlatforms._private('Amstrad CPC', _amstradCpcId);
-  static const IGDBPlatforms MSX = const IGDBPlatforms._private('MSX', _msxId);
-  static const IGDBPlatforms SEGA_GENESIS = const IGDBPlatforms._private('Sega Mega Drive/Genesis', _segaGenesisId);
-  static const IGDBPlatforms SEGA_SATURN = const IGDBPlatforms._private('Sega Saturn', _segaSaturnId);
-  static const IGDBPlatforms GAMEBOY = const IGDBPlatforms._private('Game Boy', _gameBoyId);
-  static const IGDBPlatforms ANDROID = const IGDBPlatforms._private('Android', _androidId);
-  static const IGDBPlatforms XBOX_LIVE_ARCADE = const IGDBPlatforms._private('Xbox Live Arcade', _xboxLiveArcadeId);
-  static const IGDBPlatforms NINTENDO_3DS = const IGDBPlatforms._private('Nintendo 3DS', _3dsId);
-  static const IGDBPlatforms PLAYSTATION_PORTABLE = const IGDBPlatforms._private('Playstation Portable', _pspId);
-  static const IGDBPlatforms IOS = const IGDBPlatforms._private('iOS', _iosId);
-  static const IGDBPlatforms WIIU = const IGDBPlatforms._private('Wii U', _wiiUId);
-  static const IGDBPlatforms PLAYSTATION_NETWORK = const IGDBPlatforms._private('Playstation Network', _psnId);
-  static const IGDBPlatforms PLAYSTATION_VITA = const IGDBPlatforms._private('Playstation Vita', _psVitaId);
-  static const IGDBPlatforms VIRTUAL_CONSOLE = const IGDBPlatforms._private('Virtual Console (Nintendo)', _vcId);
-  static const IGDBPlatforms PLAYSTATION_4 = const IGDBPlatforms._private('Playstation 4', _ps4Id);
-  static const IGDBPlatforms XBOX_ONE = const IGDBPlatforms._private('Xbox One', _xboxOneId);
-  static const IGDBPlatforms FAMILY_COMPUTER_DISK_SYSTEM =
-      const IGDBPlatforms._private('Family Computer Disk System', _familyComputerDiskId);
-  static const IGDBPlatforms SWITCH = const IGDBPlatforms._private('Switch', _switchId);
-  static const IGDBPlatforms ESHOP = const IGDBPlatforms._private('Nintendo eShop', _nintendoEshopId);
-  static const IGDBPlatforms STEAMVR = const IGDBPlatforms._private('SteamVR', _steamVrId);
-  static const IGDBPlatforms DAYDREAM = const IGDBPlatforms._private('Daydream', _daydreamId);
-  static const IGDBPlatforms PLAYSTATION_VR = const IGDBPlatforms._private('Playstation VR', _psVrId);
-
-  static const IGDBPlatforms NONE = const IGDBPlatforms._private('None', 0);
-
-  static const Map<int, IGDBPlatforms> _map = const {
+  static const Map<int, IGDBPlatforms> _map = {
     _wiiId: WII,
     _pcId: PC_WINDOWS,
     _ps1Id: PLAYSTATION,
@@ -122,12 +124,12 @@ class IGDBPlatforms {
   }
 
   static List<IGDBPlatforms> listFromMapList(List maps) {
-    return maps.map((m) => IGDBPlatforms.fromInt(m['id'])).toList();
+    return maps.map((m) => IGDBPlatforms.fromInt(m['id'] as int?)).toList();
   }
 
   @override
   String toString() {
-    return this.toMap().toString();
+    return toMap().toString();
   }
 
   Map toMap() {

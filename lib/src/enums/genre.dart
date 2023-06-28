@@ -1,7 +1,31 @@
-class IGDBGenres {
+// ignore_for_file: constant_identifier_names, avoid_dynamic_calls
+
+enum IGDBGenres {
+  POINT_AND_CLICK._private('Point-and-click', _pointAndClickId),
+  FIGHTING._private('Fighting', _fightingId),
+  SHOOTER._private('Shooter', _shooterId),
+  MUSIC._private('Music', _musicId),
+  PLATFORM._private('Platform', _platformId),
+  PUZZLE._private('Puzzle', _puzzleId),
+  RACING._private('Racing', _racingId),
+  REAL_TIME_STRATEGY._private('RTS', _rtsId),
+  ROLE_PLAYING_GAME._private('RPG', _rpgId),
+  SIMULATOR._private('Simulator', _simulatorId),
+  SPORT._private('Sport', _sportId),
+  STRATEGY._private('Strategy', _strategyId),
+  TURN_BASED_STRATEGY._private('TBS', _tbsId),
+  TACTICAL._private('Tactical', _tacticalId),
+  HACK_AND_SLASH._private("Hack and slash/Beat 'em up", _hackAndSlashId),
+  QUIZ_TRIVIA._private('Quiz/Trivia', _quizTriviaId),
+  PINBALL._private('Pinball', _pinballId),
+  ADVENTURE._private('Adventure', _adventureId),
+  INDIE._private('Indie', _indieId),
+  ARCADE._private('Arcade', _arcadeId),
+  NONE._private('None', 0);
+
+  const IGDBGenres._private(this.name, this.id);
   final String name;
   final int id;
-  const IGDBGenres._private(this.name, this.id);
 
   static const int _pointAndClickId = 2;
   static const int _fightingId = 4;
@@ -24,30 +48,7 @@ class IGDBGenres {
   static const int _indieId = 32;
   static const int _arcadeId = 33;
 
-  static const IGDBGenres POINT_AND_CLICK = const IGDBGenres._private('Point-and-click', _pointAndClickId);
-  static const IGDBGenres FIGHTING = const IGDBGenres._private('Fighting', _fightingId);
-  static const IGDBGenres SHOOTER = const IGDBGenres._private('Shooter', _shooterId);
-  static const IGDBGenres MUSIC = const IGDBGenres._private('Music', _musicId);
-  static const IGDBGenres PLATFORM = const IGDBGenres._private('Platform', _platformId);
-  static const IGDBGenres PUZZLE = const IGDBGenres._private('Puzzle', _puzzleId);
-  static const IGDBGenres RACING = const IGDBGenres._private('Racing', _racingId);
-  static const IGDBGenres REAL_TIME_STRATEGY = const IGDBGenres._private('RTS', _rtsId);
-  static const IGDBGenres ROLE_PLAYING_GAME = const IGDBGenres._private('RPG', _rpgId);
-  static const IGDBGenres SIMULATOR = const IGDBGenres._private('Simulator', _simulatorId);
-  static const IGDBGenres SPORT = const IGDBGenres._private('Sport', _sportId);
-  static const IGDBGenres STRATEGY = const IGDBGenres._private('Strategy', _strategyId);
-  static const IGDBGenres TURN_BASED_STRATEGY = const IGDBGenres._private('TBS', _tbsId);
-  static const IGDBGenres TACTICAL = const IGDBGenres._private('Tactical', _tacticalId);
-  static const IGDBGenres HACK_AND_SLASH = const IGDBGenres._private('Hack and slash/Beat \'em up', _hackAndSlashId);
-  static const IGDBGenres QUIZ_TRIVIA = const IGDBGenres._private('Quiz/Trivia', _quizTriviaId);
-  static const IGDBGenres PINBALL = const IGDBGenres._private('Pinball', _pinballId);
-  static const IGDBGenres ADVENTURE = const IGDBGenres._private('Adventure', _adventureId);
-  static const IGDBGenres INDIE = const IGDBGenres._private('Indie', _indieId);
-  static const IGDBGenres ARCADE = const IGDBGenres._private('Arcade', _arcadeId);
-
-  static const IGDBGenres NONE = const IGDBGenres._private('None', 0);
-
-  static const Map<int, IGDBGenres> _map = const {
+  static const Map<int, IGDBGenres> _map = {
     _simulatorId: SIMULATOR,
     _sportId: SPORT,
     _strategyId: STRATEGY,
@@ -74,6 +75,6 @@ class IGDBGenres {
   }
 
   static List<IGDBGenres> listFromMapList(List maps) {
-    return maps.map((m) => IGDBGenres.fromInt(m['id'])).toList();
+    return maps.map((m) => IGDBGenres.fromInt(m['id'] as int)).toList();
   }
 }

@@ -1,8 +1,19 @@
+// ignore_for_file: constant_identifier_names
 
-class IGDBRegions {
+enum IGDBRegions {
+  EUROPE._private('Europe', _europeId),
+  NORTH_AMERICA._private('North America', _naId),
+  AUSTRALIA._private('Australia', _australiaId),
+  NEW_ZEALAND._private('New Zealand', _newZealandId),
+  JAPAN._private('Japan', _japanId),
+  CHINA._private('China', _chinaId),
+  ASIA._private('Asia', _asiaId),
+  WORLDWIDE._private('Worldwide', _worldwideId),
+  NONE._private('None', null);
+
+  const IGDBRegions._private(this.name, this.id);
   final String name;
   final int? id;
-  const IGDBRegions._private(this.name, this.id);
 
   static const int _europeId = 1;
   static const int _naId = 2;
@@ -13,17 +24,7 @@ class IGDBRegions {
   static const int _asiaId = 7;
   static const int _worldwideId = 8;
 
-  static const IGDBRegions EUROPE = const IGDBRegions._private('Europe', _europeId);
-  static const IGDBRegions NORTH_AMERICA = const IGDBRegions._private('North America', _naId);
-  static const IGDBRegions AUSTRALIA = const IGDBRegions._private('Australia', _australiaId);
-  static const IGDBRegions NEW_ZEALAND = const IGDBRegions._private('New Zealand', _newZealandId);
-  static const IGDBRegions JAPAN = const IGDBRegions._private('Japan', _japanId);
-  static const IGDBRegions CHINA = const IGDBRegions._private('China', _chinaId);
-  static const IGDBRegions ASIA = const IGDBRegions._private('Asia', _asiaId);
-  static const IGDBRegions WORLDWIDE = const IGDBRegions._private('Worldwide', _worldwideId);
-  static const IGDBRegions NONE = const IGDBRegions._private('None', null);
-
-  static const Map<int, IGDBRegions> _map = const {
+  static const Map<int, IGDBRegions> _map = {
     _europeId: EUROPE,
     _naId: NORTH_AMERICA,
     _australiaId: AUSTRALIA,
@@ -34,11 +35,10 @@ class IGDBRegions {
     _worldwideId: WORLDWIDE
   };
 
-  static IGDBRegions? fromInt(int id) {
+  static IGDBRegions? fromInt(int? id) {
     if (id == null) {
       return WORLDWIDE;
-    }
-    else if (_map[id] == null) {
+    } else if (_map[id] == null) {
       return NONE;
     }
 
@@ -51,7 +51,7 @@ class IGDBRegions {
 
   @override
   String toString() {
-    return this.toMap().toString();
+    return toMap().toString();
   }
 
   Map toMap() {
@@ -60,5 +60,4 @@ class IGDBRegions {
       'name': name,
     };
   }
-
 }
