@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:igdb_client/src/enums/enums.dart';
-import 'package:igdb_client/src/igdb_logger.dart';
-import 'package:igdb_client/src/igdb_response.dart';
 import 'package:igdb_client/src/igdb_token.dart';
 import 'package:igdb_client/src/request_parameters.dart';
+import 'package:igdb_dart_protobuff/igdb_dart_protobuff.dart';
 
 /// A client for calling IGDB's API.
 ///
@@ -18,15 +18,11 @@ import 'package:igdb_client/src/request_parameters.dart';
 /// or mobile applications. IGDB recommends instead using a proxy.
 /// See latest documentation at: https://api-docs.igdb.com/#web-and-mobile-applications
 class IGDBClient {
-  /// Constructor for IGDBClient. Requires a [userAgent] to be sent with
-  /// every request to identify the request. Requires your twitch develeoper
-  /// [clientId] and an oauth [token] obtained from twitch or via
-  /// [getOauthToken]. Optionally, provide a [logger] to log every request
-  /// and response
-  IGDBClient(this.clientId, this.token, {this.logger});
+  /// Requires your twitch developer [clientId]
+  /// and an oauth [token] obtained from twitch or via
+  /// [getOauthToken].
+  IGDBClient(this.clientId, this.token);
   final String clientId;
-
-  final IGDBLogger? logger;
 
   final String? token;
   static const String tokenUrl = 'https://id.twitch.tv/oauth2/token';
@@ -47,7 +43,7 @@ class IGDBClient {
   ) async {
     final String url =
         '$tokenUrl?client_id=$clientId&client_secret=$clientSecret&grant_type=client_credentials';
-    final response = await post(Uri.tryParse(url)!);
+    final response = await http.post(Uri.tryParse(url)!);
 
     if (response.statusCode != 200) {
       throw Exception(
@@ -63,7 +59,7 @@ class IGDBClient {
   ///
   /// You generally shouldn't need to use this method directly, and instead
   /// it's recommended to use the endpoint you're trying to reach.
-  Future<IGDBResponse> makeRequest(String url, String body) async {
+  Future<Uint8List> makeRequest(String url, String body) async {
     final uri = Uri.parse(url);
 
     final headers = {
@@ -71,231 +67,280 @@ class IGDBClient {
       'Authorization': 'Bearer $token',
     };
 
-    if (logger != null) {
-      logger!.logRequest(uri.toString(), headers, body);
-    }
+    final post = await http.post(uri, headers: headers, body: body);
 
-    final response =
-        await post(Uri.tryParse(url)!, headers: headers, body: body);
-
-    dynamic error;
-    dynamic data;
-    if (response.statusCode != 200) {
-      error = json.decode(response.body);
-    } else {
-      data = json.decode(response.body);
-    }
-
-    final result = IGDBResponse(response.statusCode, error, data as List);
-
-    if (logger != null) {
-      logger!.logResponse(result);
-    }
-
-    return result;
+    return post.bodyBytes;
   }
 
-  Future<IGDBResponse> _requestByEndpoint(
+  Future<Uint8List> _requestByEndpoint(
     IGDBEndpoints endpoint,
     IGDBRequestParameters params,
   ) async {
     return makeRequest(
-      '$apiUrl/$endpoint.p',
+      '$apiUrl/$endpoint.pb',
       params.toBody(),
     );
   }
 
-  Future<IGDBResponse> ageRatings(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.AGE_RATINGS, params);
+  Future<AgeRating> ageRatings(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.AGE_RATINGS, params);
+    return AgeRating.fromBuffer(res);
   }
 
-  Future<IGDBResponse> ageRatingContentDescriptions(
+  Future<AgeRatingContentDescription> ageRatingContentDescriptions(
     IGDBRequestParameters params,
   ) async {
-    return _requestByEndpoint(
+    final res = await _requestByEndpoint(
       IGDBEndpoints.AGE_RATING_CONTENT_DESCRIPTIONS,
       params,
     );
+    return AgeRatingContentDescription.fromBuffer(res);
   }
 
-  Future<IGDBResponse> alternativeNames(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.ALTERNATIVE_NAMES, params);
+  Future<AlternativeName> alternativeNames(IGDBRequestParameters params) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.ALTERNATIVE_NAMES, params);
+    return AlternativeName.fromBuffer(res);
   }
 
-  Future<IGDBResponse> artworks(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.ARTWORKS, params);
+  Future<Artwork> artworks(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.ARTWORKS, params);
+    return Artwork.fromBuffer(res);
   }
 
-  Future<IGDBResponse> characters(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.CHARACTERS, params);
+  Future<Character> characters(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.CHARACTERS, params);
+    return Character.fromBuffer(res);
   }
 
-  Future<IGDBResponse> characterMugShots(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.CHARACTER_MUG_SHOTS, params);
+  Future<CharacterMugShot> characterMugShots(
+    IGDBRequestParameters params,
+  ) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.CHARACTER_MUG_SHOTS, params);
+    return CharacterMugShot.fromBuffer(res);
   }
 
-  Future<IGDBResponse> collections(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.COLLECTIONS, params);
+  Future<Collection> collections(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.COLLECTIONS, params);
+    return Collection.fromBuffer(res);
   }
 
-  Future<IGDBResponse> companies(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.COMPANIES, params);
+  Future<Company> companies(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.COMPANIES, params);
+    return Company.fromBuffer(res);
   }
 
-  Future<IGDBResponse> companyLogos(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.COMPANY_LOGOS, params);
+  Future<CompanyLogo> companyLogos(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.COMPANY_LOGOS, params);
+    return CompanyLogo.fromBuffer(res);
   }
 
-  Future<IGDBResponse> companyWebsites(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.COMPANY_WEBSITES, params);
+  Future<CompanyWebsite> companyWebsites(IGDBRequestParameters params) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.COMPANY_WEBSITES, params);
+    return CompanyWebsite.fromBuffer(res);
   }
 
-  Future<IGDBResponse> covers(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.COVERS, params);
+  Future<Cover> covers(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.COVERS, params);
+    return Cover.fromBuffer(res);
   }
 
-  Future<IGDBResponse> externalGames(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.EXTERNAL_GAMES, params);
+  Future<ExternalGame> externalGames(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.EXTERNAL_GAMES, params);
+    return ExternalGame.fromBuffer(res);
   }
 
-  Future<IGDBResponse> franchises(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.FRANCHISES, params);
+  Future<Franchise> franchises(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.FRANCHISES, params);
+    return Franchise.fromBuffer(res);
   }
 
-  Future<IGDBResponse> games(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.GAMES, params);
+  Future<Game> games(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.GAMES, params);
+    return Game.fromBuffer(res);
   }
 
-  Future<IGDBResponse> gameEngines(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.GAME_ENGINES, params);
+  Future<GameEngine> gameEngines(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.GAME_ENGINES, params);
+    return GameEngine.fromBuffer(res);
   }
 
-  Future<IGDBResponse> gameEngineLogos(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.GAME_ENGINE_LOGOS, params);
+  Future<GameEngineLogo> gameEngineLogos(IGDBRequestParameters params) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.GAME_ENGINE_LOGOS, params);
+    return GameEngineLogo.fromBuffer(res);
   }
 
-  Future<IGDBResponse> gameLocalization(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.GAME_LOCALIZATION, params);
+  Future<GameLocalization> gameLocalization(
+    IGDBRequestParameters params,
+  ) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.GAME_LOCALIZATION, params);
+    return GameLocalization.fromBuffer(res);
   }
 
-  Future<IGDBResponse> gameModes(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.GAME_MODES, params);
+  Future<GameMode> gameModes(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.GAME_MODES, params);
+    return GameMode.fromBuffer(res);
   }
 
-  Future<IGDBResponse> gameVideos(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.GAME_VIDEOS, params);
+  Future<GameVideo> gameVideos(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.GAME_VIDEOS, params);
+    return GameVideo.fromBuffer(res);
   }
 
-  Future<IGDBResponse> gameVersions(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.GAME_VERSIONS, params);
+  Future<GameVersion> gameVersions(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.GAME_VERSIONS, params);
+    return GameVersion.fromBuffer(res);
   }
 
-  Future<IGDBResponse> gameVersionFeatures(IGDBRequestParameters params) async {
-    return _requestByEndpoint(
+  Future<GameVersionFeature> gameVersionFeatures(
+    IGDBRequestParameters params,
+  ) async {
+    final res = await _requestByEndpoint(
       IGDBEndpoints.GAME_VERSION_FEATURES,
       params,
     );
+    return GameVersionFeature.fromBuffer(res);
   }
 
-  Future<IGDBResponse> gameVersionFeatureValues(
+  Future<GameVersionFeatureValue> gameVersionFeatureValues(
     IGDBRequestParameters params,
   ) async {
-    return _requestByEndpoint(
+    final res = await _requestByEndpoint(
       IGDBEndpoints.GAME_VERSION_FEATURE_VALUES,
       params,
     );
+    return GameVersionFeatureValue.fromBuffer(res);
   }
 
-  Future<IGDBResponse> genres(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.GENRES, params);
+  Future<Genre> genres(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.GENRES, params);
+    return Genre.fromBuffer(res);
   }
 
-  Future<IGDBResponse> involvedCompanies(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.INVOLVED_COMPANIES, params);
+  Future<InvolvedCompany> involvedCompanies(
+    IGDBRequestParameters params,
+  ) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.INVOLVED_COMPANIES, params);
+    return InvolvedCompany.fromBuffer(res);
   }
 
-  Future<IGDBResponse> keywords(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.KEYWORDS, params);
+  Future<Keyword> keywords(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.KEYWORDS, params);
+    return Keyword.fromBuffer(res);
   }
 
-  Future<IGDBResponse> language(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.LANGUAGE, params);
+  Future<Language> language(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.LANGUAGE, params);
+    return Language.fromBuffer(res);
   }
 
-  Future<IGDBResponse> languageSupport(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.LANGUAGE_SUPPORT, params);
+  Future<LanguageSupport> languageSupport(IGDBRequestParameters params) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.LANGUAGE_SUPPORT, params);
+    return LanguageSupport.fromBuffer(res);
   }
 
-  Future<IGDBResponse> languageSupportType(IGDBRequestParameters params) async {
-    return _requestByEndpoint(
+  Future<LanguageSupportType> languageSupportType(
+    IGDBRequestParameters params,
+  ) async {
+    final res = await _requestByEndpoint(
       IGDBEndpoints.LANGUAGE_SUPPORT_TYPE,
       params,
     );
+    return LanguageSupportType.fromBuffer(res);
   }
 
-  Future<IGDBResponse> multiplayerModes(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.MULTIPLAYER_MODES, params);
+  Future<MultiplayerMode> multiplayerModes(IGDBRequestParameters params) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.MULTIPLAYER_MODES, params);
+    return MultiplayerMode.fromBuffer(res);
   }
 
-  Future<IGDBResponse> platforms(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.PLATFORMS, params);
+  Future<Platform> platforms(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.PLATFORMS, params);
+    return Platform.fromBuffer(res);
   }
 
-  Future<IGDBResponse> platformLogos(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.PLATFORM_LOGOS, params);
+  Future<PlatformLogo> platformLogos(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.PLATFORM_LOGOS, params);
+    return PlatformLogo.fromBuffer(res);
   }
 
-  Future<IGDBResponse> platformVersions(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.PLATFORM_VERSIONS, params);
+  Future<PlatformVersion> platformVersions(IGDBRequestParameters params) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.PLATFORM_VERSIONS, params);
+    return PlatformVersion.fromBuffer(res);
   }
 
-  Future<IGDBResponse> platformVersionCompanies(
+  Future<PlatformVersionCompany> platformVersionCompanies(
     IGDBRequestParameters params,
   ) async {
-    return _requestByEndpoint(
+    final res = await _requestByEndpoint(
       IGDBEndpoints.PLATFORM_VERSION_COMPANIES,
       params,
     );
+    return PlatformVersionCompany.fromBuffer(res);
   }
 
-  Future<IGDBResponse> platformVersionReleaseDates(
+  Future<PlatformVersionReleaseDate> platformVersionReleaseDates(
     IGDBRequestParameters params,
   ) async {
-    return _requestByEndpoint(
+    final res = await _requestByEndpoint(
       IGDBEndpoints.PLATFORM_VERSION_RELEASE_DATES,
       params,
     );
+    return PlatformVersionReleaseDate.fromBuffer(res);
   }
 
-  Future<IGDBResponse> platformWebsites(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.PLATFORM_WEBSITES, params);
+  Future<PlatformWebsite> platformWebsites(IGDBRequestParameters params) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.PLATFORM_WEBSITES, params);
+    return PlatformWebsite.fromBuffer(res);
   }
 
-  Future<IGDBResponse> playerPerspectives(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.PLAYER_PERSPECTIVES, params);
+  Future<PlayerPerspective> playerPerspectives(
+    IGDBRequestParameters params,
+  ) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.PLAYER_PERSPECTIVES, params);
+    return PlayerPerspective.fromBuffer(res);
   }
 
-  Future<IGDBResponse> region(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.REGION, params);
+  Future<Region> region(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.REGION, params);
+    return Region.fromBuffer(res);
   }
 
-  Future<IGDBResponse> releaseDate(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.RELEASE_DATE, params);
+  Future<ReleaseDate> releaseDate(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.RELEASE_DATE, params);
+    return ReleaseDate.fromBuffer(res);
   }
 
-  Future<IGDBResponse> releaseDateStatus(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.RELEASE_DATE_STATUS, params);
+  Future<ReleaseDateStatus> releaseDateStatus(
+    IGDBRequestParameters params,
+  ) async {
+    final res =
+        await _requestByEndpoint(IGDBEndpoints.RELEASE_DATE_STATUS, params);
+    return ReleaseDateStatus.fromBuffer(res);
   }
 
-  Future<IGDBResponse> search(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.SEARCH, params);
+  Future<Search> search(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.SEARCH, params);
+    return Search.fromBuffer(res);
   }
 
-  Future<IGDBResponse> themes(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.THEMES, params);
+  Future<Theme> themes(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.THEMES, params);
+    return Theme.fromBuffer(res);
   }
 
-  Future<IGDBResponse> websites(IGDBRequestParameters params) async {
-    return _requestByEndpoint(IGDBEndpoints.WEBSITES, params);
+  Future<Website> websites(IGDBRequestParameters params) async {
+    final res = await _requestByEndpoint(IGDBEndpoints.WEBSITES, params);
+    return Website.fromBuffer(res);
   }
 }

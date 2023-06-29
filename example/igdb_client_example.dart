@@ -1,10 +1,9 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:igdb_client/igdb_client.dart';
 
 void main() async {
-  final file = File('cred.txt').readAsStringSync().split('\n');
+  final file = File('cred.txt').readAsStringSync().split('_');
   final clientId = file[0];
   final secret = file[1];
   // You should only run this once, then save it somewhere. It will eventually
@@ -15,21 +14,21 @@ void main() async {
   final token = await IGDBClient.getOauthToken(clientId, secret);
 
   final client = IGDBClient(
-    
     clientId,
     token.accessToken,
-    logger: IGDBConsoleLogger(),
   );
 
-  // Find games with 'infamous' in their name and return
-  // the results' name and expand their release_dates and platforms.
+  final response = await client
+      .search(const IGDBRequestParameters(search: 'Counter Strike'));
+
+  print(response.toProto3Json());
   final gamesResponse = await client.games(
     const IGDBRequestParameters(
       search: 'infamous',
       fields: ['name', 'release_dates.*', 'platforms.*'],
     ),
   );
-  printResponse(gamesResponse);
+  print(gamesResponse.toProto3Json());
 
   // Find games that are not yet released but are releasing soon in the
   // North American, Worlwide, or Unspecified regions, then sort by
@@ -39,21 +38,17 @@ void main() async {
   final String timeNow = secsSinceEpoch.toString();
   final releaseResponse = await client.releaseDate(
     IGDBRequestParameters(
-      filters:
+      where:
           'date > $timeNow & (region = ${IGDBRegions.NORTH_AMERICA.id} | region = ${IGDBRegions.NONE.id} | region = ${IGDBRegions.WORLDWIDE.id})',
-      order: 'date asc',
+      sort: 'date asc',
     ),
   );
-  printResponse(releaseResponse);
+  print(releaseResponse.toProto3Json());
 
   final gameIdResponse = await client.games(
     const IGDBRequestParameters(
       ids: [43378],
     ),
   );
-  printResponse(gameIdResponse);
-}
-
-void printResponse(IGDBResponse resp) {
-  log(IGDBHelpers.getPrettyStringFromMap(resp.toMap()));
+  print(gameIdResponse.toProto3Json());
 }

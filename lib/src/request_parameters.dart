@@ -1,36 +1,42 @@
-class IGDBRequestParameters { // https://api-docs.igdb.com/#pagination
+class IGDBRequestParameters {
+  // https://api-docs.igdb.com/#pagination
 
   const IGDBRequestParameters({
-    this.filters,
-    this.ids,
+    this.where,
     this.fields,
     this.limit,
-    this.order,
+    this.sort,
     this.search,
+    this.exclude,
     this.offset,
+    this.ids,
   });
-  final String? filters; // https://api-docs.igdb.com/#filters
+  final String? where; // https://api-docs.igdb.com/#filters
+  final List<String>? exclude;
   final List<int>? ids;
   final List<String>? fields;
   final int? limit;
-  final String? order; // https://api-docs.igdb.com/#sorting
+  final String? sort; // https://api-docs.igdb.com/#sorting
   final String? search;
   final int? offset;
 
-  IGDBRequestParameters copyWith(
-      {String? filters,
-      List<int>? ids,
-      List<String>? fields,
-      int? limit,
-      String? order,
-      String? search,
-      int? offset,}) {
+  IGDBRequestParameters copyWith({
+    String? where,
+    List<String>? fields,
+    int? limit,
+    List<String>? exclude,
+    String? sort,
+    String? search,
+    int? offset,
+    List<int>? ids,
+  }) {
     return IGDBRequestParameters(
-      filters: filters ?? this.filters,
-      ids: ids ?? this.ids,
+      where: where ?? this.where,
       fields: fields ?? this.fields,
+      ids: ids ?? this.ids,
+      exclude: exclude ?? this.exclude,
       limit: limit ?? this.limit,
-      order: order ?? this.order,
+      sort: sort ?? this.sort,
       search: search ?? this.search,
       offset: offset ?? this.offset,
     );
@@ -44,31 +50,49 @@ class IGDBRequestParameters { // https://api-docs.igdb.com/#pagination
     }
 
     if (fields != null && fields!.isNotEmpty) {
-      result += 'fields ${fields!.join(',')};';
+      result += 'f ${fields!.join(',')};';
     } else {
-      result += 'fields *;';
+      result += 'f *;';
     }
 
     if (ids != null && ids!.isNotEmpty) {
-      result += 'where id = (${ids!.join(',')});';
+      result += 'w id = (${ids!.join(',')});';
     }
 
-    if (filters != null && filters!.isNotEmpty) {
-      result += 'where $filters;';
+    if (exclude != null && exclude!.isNotEmpty) {
+      result += 'x ${exclude!.join(',')};';
     }
 
-    if (order != null && order != '') {
-      result += 'sort $order;';
+    if (where != null && where!.isNotEmpty) {
+      result += 'w $where;';
+    }
+
+    if (sort != null && sort != '') {
+      result += 's $sort;';
     }
 
     if (limit != null && limit! > 0) {
-      result += 'limit $limit;';
+      result += 'l $limit;';
     }
 
     if (offset != null && offset! > 0) {
-      result += 'offset $offset;';
+      result += 'o $offset;';
     }
 
     return result;
+  }
+}
+
+class Sort {
+  const Sort(this.apiName);
+
+  final String apiName;
+
+  static const Sort ascending = Sort('asc');
+  static const Sort descending = Sort('desc');
+
+  @override
+  String toString() {
+    return apiName;
   }
 }

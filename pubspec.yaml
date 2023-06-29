@@ -1,6 +1,7 @@
 name: igdb_client
 description: A dart library for IGDB API
 version: 0.0.7
+publish_to: none
 homepage: https://github.com/mitchhymel/dart-igdb_client
 
 environment:
@@ -9,6 +10,9 @@ environment:
 dependencies:
   fixnum: ^1.1.0
   http: ^1.1.0
+  igdb_dart_protobuff:
+    git:
+      url: https://github.com/devsdocs/igdb_dart_protobuff.git
   protobuf: ^3.0.0
   protoc_plugin: ^21.0.2
 
