@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   fixnum: ^1.1.0
-  http: ^1.1.0
+  http:  ^0.13.5
   igdb_dart_protobuff:
     git:
       url: https://github.com/devsdocs/igdb_dart_protobuff.git
